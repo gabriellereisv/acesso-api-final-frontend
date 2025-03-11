@@ -25,6 +25,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
     data() {
@@ -39,11 +40,31 @@ export default {
     methods:{
         async Processarlogin(){
             try{
-                const response = await axios.post('https://localhost:7246/api/v1/logins/autenticar', this.dadosLogin)
+                const response = await axios.post('https://localhost:7202/api/v1/login/autenticar', this.dadosLogin)
+                localStorage.setItem('dados-usuario-logado',JSON.stringify(response.data));
                 const resultado = response.data;
                 console.log(resultado)
+                Swal.fire({
+                  title: 'Login realizado com sucesso',
+                  text: 'Você será redirecionado para o sistema',
+                  icon: 'sucess',
+                  timer: 2000,
+                  showButtonText: false
+                });
+
+                //redirecionando
+                setTimeout(() => {
+                  this.$router.push('/home');
+                },2000);
+
             }catch(error){
                 this.errorAlerta = 'Login ou senha inválidos';
+                Swal.fire({
+                  title: 'Atenção - Erro',
+                  text: this.errorAlerta,
+                  icon: 'error',
+                  confirmButtonText: 'Ok'
+                });
             }
         }
     }
